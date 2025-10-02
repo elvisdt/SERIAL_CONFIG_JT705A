@@ -25,6 +25,11 @@ class ComPanel(GroupBox):
     def __init__(self):
         super().__init__("COM Setting")
         lay = QGridLayout(self)
+        lay.setContentsMargins(8, 8, 8, 8)
+        lay.setHorizontalSpacing(16)
+        lay.setVerticalSpacing(8)
+        
+        # --- Widgets ---
         self.label_port = QLabel("Com Port")
         self.combo_port = QComboBox()
         self.combo_port.setEditable(True)
@@ -45,6 +50,7 @@ class ComPanel(GroupBox):
 
         lay.addWidget(self.label_port, 0, 0)
         lay.addWidget(self.combo_port, 0, 1)
+
         lay.addWidget(self.btn_open, 0, 2)
         lay.addWidget(self.indicator, 0, 3)
         lay.addWidget(self.label_baud, 1, 0)
@@ -55,26 +61,67 @@ class ComPanel(GroupBox):
 
 
 
-# ---------- Paneles superiores ----------
+# basic_info_panel.py
+# from PyQt6.QtCore import Qt
+# from PyQt6.QtWidgets import QGridLayout, QToolButton, QStyle
+# from app.ui.widgets.group_box import GroupBox
+# from app.ui.widgets.label_line import LabeledLine
+
 class BasicInfoPanel(GroupBox):
-    def __init__(self):
+    def __init__(self, label_width: int = 90):
         super().__init__("Basic information")
-        grid = QGridLayout(self)
-        # ID / IMEI / IMSI / CCID / Version
-        self.ed_id = LabeledLine("ID:", read_only=True)
-        self.ed_imei = LabeledLine("IMEI:", read_only=True)
-        self.ed_imsi = LabeledLine("IMSI:", read_only=True)
-        self.ed_ccid = LabeledLine("CCID:", read_only=True)
-        self.ed_version = LabeledLine("Version:", read_only=True)
+
+        # --- Widgets (label_width asegura alineación pareja)
+        self.ed_id      = LabeledLine("ID:",      read_only=True, label_width=label_width)
+        self.ed_imei    = LabeledLine("IMEI:",    read_only=True, label_width=label_width)
+        self.ed_ccid    = LabeledLine("CCID:",    read_only=True, label_width=label_width)
+        self.ed_version = LabeledLine("Version:", read_only=True, label_width=label_width)
 
         self.btn_refresh = QToolButton()
         self.btn_refresh.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload))
         self.btn_refresh.setToolTip("Refresh basic information")
 
-        grid.addWidget(self.ed_id, 0, 0, 1, 2)
-        grid.addWidget(self.ed_imei, 1, 0, 1, 2)
-        grid.addWidget(self.ed_imsi, 2, 0, 1, 2)
-        grid.addWidget(self.ed_ccid, 0, 2, 1, 2)
-        grid.addWidget(self.ed_version, 1, 2, 1, 2)
-        grid.addWidget(self.btn_refresh, 2, 3, 1, 1, alignment=Qt.AlignmentFlag.AlignRight)
+        # Tamaño mínimo (ejemplo: 32x32 px)
+        #self.btn_refresh.setMinimumSize(32, 32)
 
+        # También puedes controlar el tamaño del ícono para que llene mejor el botón
+        self.btn_refresh.setIconSize(QtCore.QSize(32, 32))
+
+        # --- Layout
+        grid = QGridLayout(self)
+        grid.setContentsMargins(8, 8, 8, 8)
+        #grid.setHorizontalSpacing(16)
+        grid.setVerticalSpacing(8)
+
+        # Izquierda: ID, IMEI
+        grid.addWidget(self.ed_id,   0, 0)
+        grid.addWidget(self.ed_imei, 1, 0)
+
+        # Derecha: CCID, Version
+        grid.addWidget(self.ed_ccid,    0, 1)
+        grid.addWidget(self.ed_version, 1, 1)
+
+        # Columna separada solo para el botón → ocupa 2 filas centrado
+        grid.addWidget(self.btn_refresh, 0, 2, 2, 1, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        # Que columnas 0 y 1 repartan el espacio de los campos
+        grid.setColumnStretch(0, 1)
+        grid.setColumnStretch(1, 1)
+        grid.setColumnStretch(2, 0)  # botón no se estira
+
+    # ---- API cómoda para que el panel sea fácil de usar ----
+    def set_values(self, *, id_: str = "", imei: str = "", ccid: str = "", version: str = "") -> None:
+        self.ed_id.setText(id_)
+        self.ed_imei.setText(imei)
+        self.ed_ccid.setText(ccid)
+        self.ed_version.setText(version)
+
+    def set_values_from_dict(self, data: dict) -> None:
+        self.ed_id.setText(data.get("id_", data.get("id", "")))
+        self.ed_imei.setText(data.get("imei", ""))
+        self.ed_ccid.setText(data.get("ccid", ""))
+        self.ed_version.setText(data.get("version", ""))
+
+    def clear(self) -> None:
+        for w in (self.ed_id, self.ed_imei, self.ed_ccid, self.ed_version):
+            w.setText("")

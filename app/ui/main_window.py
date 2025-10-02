@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.settings = settings
         self.setWindowTitle("Config-Ver — PyQt6 (UI only)")
-        self.resize(1200, 680)
+        self.resize(1200, 650)
 
         # --- Central widget ---
         central = QWidget()
@@ -37,8 +37,9 @@ class MainWindow(QMainWindow):
         top = QHBoxLayout()
         self.com_panel = ComPanel()
         self.basic_panel = BasicInfoPanel()
-        top.addWidget(self.com_panel)
-        top.addWidget(self.basic_panel, 1)
+
+        top.addWidget(self.com_panel,1)
+        top.addWidget(self.basic_panel, 3)
 
         # --- Tabs ---
         tabs = QTabWidget()

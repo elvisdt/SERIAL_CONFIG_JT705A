@@ -47,13 +47,10 @@ class ToolClass(QtWidgets.QWidget, Ui_MainWindow):
         self.check.clicked.connect(lambda: self.updater.check_update(self.update, self.ask))
 
 if __name__ == "__main__":
-
     """
     The main entry point of the application. It deletes old versions of the tool, 
     initializes the PyQt application, and shows the main window.
     """
-
-
 
     app = QtWidgets.QApplication(sys.argv)
     # Delete old versions
