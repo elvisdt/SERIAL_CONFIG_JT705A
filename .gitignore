@@ -1,0 +1,17 @@
+
+.venv/
+__pycache__/
+*.pyc
+
+# PyQt6
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.dll
+*.dylib
+*.exe
+*.obj
+*.lib
+*.log
+
